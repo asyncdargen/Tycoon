@@ -2,10 +2,12 @@ package ru.dargen.tycoon.utils;
 
 import net.minecraft.server.v1_12_R1.NBTBase;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,6 +17,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ItemBuilder extends ItemStack {
 
@@ -38,15 +41,22 @@ public class ItemBuilder extends ItemStack {
         super(material,amount,(short)durability);
     }
 
-    public ItemBuilder setName(String name){
+    public ItemBuilder setName(String iname){
         ItemMeta meta = getItemMeta();
-        meta.setDisplayName(name);
+        meta.setDisplayName(iname);
         setItemMeta(meta);
         return this;
     }
 
     public ItemBuilder setDurability(int durability){
         setDurability((short)durability);
+        return this;
+    }
+
+    public ItemBuilder setUnbreakable(boolean is) {
+        ItemMeta meta = getItemMeta();
+        meta.setUnbreakable(is);
+        setItemMeta(meta);
         return this;
     }
 
@@ -125,9 +135,20 @@ public class ItemBuilder extends ItemStack {
         ItemMeta meta = getItemMeta();
         List<String> lore = new ArrayList<>();
         if(meta.hasLore())
-            lore=new ArrayList<>(meta.getLore());
+            lore = new ArrayList<>(meta.getLore());
         lore.addAll(collect);
         meta.setLore(lore);
+        setItemMeta(meta);
+        return this;
+    }
+
+    public ItemBuilder addLore(String... collect) {
+        return addLore(Arrays.asList(collect));
+    }
+
+    public ItemBuilder addItemEnchant(Enchantment enchantment, int level) {
+        ItemMeta meta = getItemMeta();
+        meta.addEnchant(enchantment, level, true);
         setItemMeta(meta);
         return this;
     }
@@ -193,15 +214,39 @@ public class ItemBuilder extends ItemStack {
     public ItemBuilder setTag(String tag, NBTBase value){
         net.minecraft.server.v1_12_R1.ItemStack nms = CraftItemStack.asNMSCopy(this);
         NBTTagCompound nmsTag = nms.getTag();
+        if (nmsTag == null)
+            nmsTag = new NBTTagCompound();
         nmsTag.set(tag, value);
         nms.setTag(nmsTag);
         return new ItemBuilder(CraftItemStack.asBukkitCopy(nms));
     }
 
-    public Object getItem(String tag){
+    public <T extends NBTBase> T getTag(String tag){
         net.minecraft.server.v1_12_R1.ItemStack nms = CraftItemStack.asNMSCopy(this);
         NBTTagCompound nmsTag = nms.getTag();
-        return nmsTag== null && nmsTag.get(tag)==null ? null : nmsTag.get(tag);
+        if (nmsTag == null)
+            nmsTag = new NBTTagCompound();
+        return nmsTag.get(tag) == null ? null : (T) nmsTag.get(tag);
     }
+
+    public Map<String, NBTBase> getTags(){
+        net.minecraft.server.v1_12_R1.ItemStack nms = CraftItemStack.asNMSCopy(this);
+        NBTTagCompound nmsTag = nms.getTag();
+        if (nmsTag == null)
+            nmsTag = new NBTTagCompound();
+        return nmsTag.map;
+    }
+
+    public ItemBuilder setTags(Map<String, NBTBase> tags){
+        net.minecraft.server.v1_12_R1.ItemStack nms = CraftItemStack.asNMSCopy(this);
+        NBTTagCompound nmsTag = nms.getTag();
+        if (nmsTag == null)
+            nmsTag = new NBTTagCompound();
+        for (String key : tags.keySet()) {
+            nmsTag.set(key, tags.get(key));
+        }
+        return new ItemBuilder(CraftItemStack.asBukkitCopy(nms))    ;
+    }
+
 
 }

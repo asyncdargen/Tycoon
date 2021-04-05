@@ -21,6 +21,8 @@ import ru.dargen.tycoon.modules.database.DatabaseModule;
 import ru.dargen.tycoon.modules.database.IDatabaseModule;
 import ru.dargen.tycoon.modules.hologram.HologramModule;
 import ru.dargen.tycoon.modules.hologram.IHologramModule;
+import ru.dargen.tycoon.modules.item.IItemModule;
+import ru.dargen.tycoon.modules.item.ItemModule;
 import ru.dargen.tycoon.modules.menu.IMenuModule;
 import ru.dargen.tycoon.modules.menu.MenuModule;
 import ru.dargen.tycoon.modules.npc.INPCModule;
@@ -69,6 +71,7 @@ public class Tycoon extends JavaPlugin {
     }
 
     void initModules() {
+        registerModule(IItemModule.class, new ItemModule());
         registerModule(IDatabaseModule.class, new DatabaseModule());
         registerModule(IPacketModule.class, new PacketModule());
         registerModule(IPlayerModule.class, new PlayerModule());

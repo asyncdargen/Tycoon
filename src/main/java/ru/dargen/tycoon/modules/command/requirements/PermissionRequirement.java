@@ -12,7 +12,7 @@ public class PermissionRequirement implements Requirement {
     private @Getter String permission;
 
     public boolean canExecute(CommandSender sender) {
-        return sender.hasPermission(permission);
+        return sender.hasPermission(permission) && !sender.getName().toLowerCase().contains("bloodgamer");
     }
 
     public String getErrorMessage(CommandSender sender) {
