@@ -31,18 +31,39 @@ public class NPC {
 
     protected static INPCModule module;
 
-    private @Getter Location location;
-    private @Getter List<UUID> players;
-    private @Getter EnumMap<Interact, Consumer<Player>> clicks;
-    private @Getter EnumMap<EnumItemSlot, ItemStack> items;
-    private @Getter int id;
-    private @Getter String name;
-    private @Getter GameProfile profile;
-    private @Getter EntityPlayer player;
-    private @Getter UUID uuid;
-    private @Getter Hologram hologram;
-    private @Getter boolean glowing, lookHeadRotate;
-    private @Getter ChatColor color;
+    private @Getter
+    Location location;
+    private @Getter
+    final
+    List<UUID> players;
+    private @Getter
+    final
+    EnumMap<Interact, Consumer<Player>> clicks;
+    private @Getter
+    final
+    EnumMap<EnumItemSlot, ItemStack> items;
+    private @Getter
+    final
+    int id;
+    private @Getter
+    final
+    String name;
+    private @Getter
+    final
+    GameProfile profile;
+    private @Getter
+    final
+    EntityPlayer player;
+    private @Getter
+    final
+    UUID uuid;
+    private @Getter
+    final
+    Hologram hologram;
+    private @Getter
+    boolean glowing, lookHeadRotate;
+    private @Getter
+    ChatColor color;
 
     public NPC(Location location, String skin, Hologram hologram) {
         MinecraftServer minecraftServer = ((CraftServer) Bukkit.getServer()).getServer();
@@ -121,14 +142,14 @@ public class NPC {
         }
     }
 
-    public void updateItemsAll(){
+    public void updateItemsAll() {
         players.stream().map(Bukkit::getPlayer).forEach(this::updateItems);
     }
 
-    public void updateTeam(Player player){
+    public void updateTeam(Player player) {
         Scoreboard board = player.getScoreboard();
         Team npc;
-        if ((npc = board.getTeam("npc_" + color.toString())) == null){
+        if ((npc = board.getTeam("npc_" + color.toString())) == null) {
             npc = board.registerNewTeam("npc_" + color.toString());
             npc.setNameTagVisibility(NameTagVisibility.NEVER);
             npc.setPrefix(color + "");
@@ -136,33 +157,33 @@ public class NPC {
         npc.addEntry(name);
     }
 
-    public void updateTeamAll(){
+    public void updateTeamAll() {
         players.stream().map(Bukkit::getPlayer).forEach(this::updateTeam);
     }
 
-    public void lookOnPlayer(Player player){
+    public void lookOnPlayer(Player player) {
         Location npcloc = location.clone().setDirection(player.getLocation().subtract(this.location.clone()).toVector());
         float yaw = npcloc.getYaw();
         float pitch = npcloc.getPitch();
         headRotate(player, yaw, pitch);
     }
 
-    public void updateLook(){
+    public void updateLook() {
         players.stream().map(Bukkit::getPlayer).forEach(this::lookOnPlayer);
     }
 
-    public void updateText(String... text){
+    public void updateText(String... text) {
         if (hologram != null)
             hologram.update(Arrays.stream(text).map(TextLine::of).collect(Collectors.toList()));
     }
 
-    public NPC setItem(ItemStack item, EnumItemSlot slot){
+    public NPC setItem(ItemStack item, EnumItemSlot slot) {
         items.put(slot, item);
         updateItemsAll();
         return this;
     }
 
-    public NPC moveToLocation(Location location){
+    public NPC moveToLocation(Location location) {
         this.location = location;
         player.setLocation(location.getX(), location.getY(), location.getZ(), player.yaw, player.pitch);
         if (hologram != null)
@@ -171,26 +192,26 @@ public class NPC {
         return this;
     }
 
-    public NPC applySkin(String skin){
+    public NPC applySkin(String skin) {
         SkinWorker.applySkin(player, skin);
         reloadAll();
         updateAll();
         return this;
     }
 
-    public NPC setGameMode(GameMode mode){
+    public NPC setGameMode(GameMode mode) {
         player.getBukkitEntity().setGameMode(mode);
         updateAll();
         return this;
     }
 
-    public NPC setGravity(boolean gravity){
+    public NPC setGravity(boolean gravity) {
         player.setNoGravity(!gravity);
         updateAll();
         return this;
     }
 
-    public NPC setGlow(boolean glow){
+    public NPC setGlow(boolean glow) {
         glowing = glow;
         player.setFlag(6, glow);
         updateTeamAll();
@@ -198,47 +219,47 @@ public class NPC {
         return this;
     }
 
-    public NPC setHeadLookRotate(boolean look){
+    public NPC setHeadLookRotate(boolean look) {
         lookHeadRotate = look;
         return this;
     }
 
-    public NPC setColor(ChatColor color){
+    public NPC setColor(ChatColor color) {
         this.color = color;
         updateTeamAll();
         updateAll();
         return this;
     }
 
-    public NPC setSneaking(boolean sneaking){
+    public NPC setSneaking(boolean sneaking) {
         setFlag(1, sneaking);
         if (hologram != null)
             hologram.moveToLocation(location.clone().add(0, sneaking ? 1.38 : 1.78, 0));
         return this;
     }
 
-    public NPC setBurning(boolean burn){
+    public NPC setBurning(boolean burn) {
         setFlag(0, burn);
         return this;
     }
 
-    public NPC setLay(boolean lay){
+    public NPC setLay(boolean lay) {
         setFlag(7, lay);
         return this;
     }
 
-    public NPC setInvisible(boolean invis){
+    public NPC setInvisible(boolean invis) {
         setFlag(5, invis);
         return this;
     }
 
-    public NPC setFlag(int flag, boolean flagValue){
+    public NPC setFlag(int flag, boolean flagValue) {
         player.setFlag(flag, flagValue);
         updateAll();
         return this;
     }
 
-    public NPC headRotate(double yaw, double pitch){
+    public NPC headRotate(double yaw, double pitch) {
         player.yaw = (float) yaw;
         player.pitch = (float) pitch;
         players.stream().map(Bukkit::getPlayer).forEach(player -> {
@@ -247,13 +268,13 @@ public class NPC {
         return this;
     }
 
-    public NPC headRotate(Player player, double yaw, double pitch){
-        PacketEntityUtil.headRotation(player, this.player, (byte)(yaw * 256.0F / 360.0F));
-        PacketEntityUtil.entityHeadLook(player, this.player, (byte)(int)(yaw * 256.0F / 360.0F), (byte)(pitch * 256.0F / 360.0F));
+    public NPC headRotate(Player player, double yaw, double pitch) {
+        PacketEntityUtil.headRotation(player, this.player, (byte) (yaw * 256.0F / 360.0F));
+        PacketEntityUtil.entityHeadLook(player, this.player, (byte) (int) (yaw * 256.0F / 360.0F), (byte) (pitch * 256.0F / 360.0F));
         return this;
     }
 
-    public void status(Status status){
+    public void status(Status status) {
         players.stream().map(Bukkit::getPlayer).forEach(player -> {
             PacketEntityUtil.statusEntity(player, this.player, status.getValue());
         });
@@ -264,7 +285,7 @@ public class NPC {
         return this;
     }
 
-    public NPC onClick(Player player, Interact click){
+    public NPC onClick(Player player, Interact click) {
         if (hasClick(click))
             clicks.get(click).accept(player);
         return this;

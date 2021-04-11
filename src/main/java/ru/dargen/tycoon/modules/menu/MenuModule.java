@@ -16,35 +16,35 @@ public class MenuModule extends Module implements IMenuModule {
     private List<Menu> menuList;
 
     @EventHandler
-    public void onClick(InventoryClickEvent event){
+    public void onClick(InventoryClickEvent event) {
         Menu menu = getMenu(event.getInventory());
         if (menu == null)
             return;
         menu.onClick(event.getSlot(), event);
-        if(event.getWhoClicked().getOpenInventory().getTopInventory().equals(menu.getInventory()))
+        if (event.getWhoClicked().getOpenInventory().getTopInventory().equals(menu.getInventory()))
             menu.onAllClick(event);
     }
 
     @EventHandler
-    public void onClose(InventoryCloseEvent event){
+    public void onClose(InventoryCloseEvent event) {
         Menu menu = getMenu(event.getInventory());
-        if(menu == null)
+        if (menu == null)
             return;
         if (event.getInventory().equals(event.getInventory()))
             menu.onClose(event);
     }
 
     public void run() {
-        CompletableFuture.runAsync(()-> {
+        CompletableFuture.runAsync(() -> {
             menuList.forEach(Menu::update);
         });
     }
 
-    public void enable() throws Exception {
+    public void enable(Tycoon tycoon) throws Exception {
         menuList = new ArrayList<>();
         Menu.module = this;
         registerListener();
-        runTaskTimerAsynchronously(Tycoon.getInstance(), 0, 20);
+        runTaskTimerAsynchronously(tycoon, 0, 20);
     }
 
     public void disable() throws Exception {

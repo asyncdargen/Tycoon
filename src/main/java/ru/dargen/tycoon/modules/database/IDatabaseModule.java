@@ -6,7 +6,7 @@ import ru.dargen.tycoon.modules.IModule;
 
 import java.sql.Connection;
 
-public interface IDatabaseModule extends IModule, IAsyncDatabaseExecutor {
+public interface IDatabaseModule extends IModule, IDatabaseExecutor {
 
     static IDatabaseModule get() {
         return (IDatabaseModule) Tycoon.getInstance().getModule(IDatabaseModule.class);

@@ -11,12 +11,18 @@ import ru.dargen.tycoon.modules.npc.enums.Interact;
 
 public class PlayerInteractNPCEvent extends PlayerEvent implements Cancellable {
 
-    private @Getter @Setter boolean cancelled;
-    private @Getter NPC npc;
-    private @Getter Interact interact;
     private static final HandlerList handlers = new HandlerList();
+    private @Getter
+    @Setter
+    boolean cancelled;
+    private @Getter
+    final
+    NPC npc;
+    private @Getter
+    final
+    Interact interact;
 
-    public PlayerInteractNPCEvent(Player player, NPC npc, Interact interact){
+    public PlayerInteractNPCEvent(Player player, NPC npc, Interact interact) {
         super(player);
         this.npc = npc;
         this.interact = interact;

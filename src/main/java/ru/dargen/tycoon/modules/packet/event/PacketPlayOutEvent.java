@@ -11,11 +11,15 @@ import org.bukkit.event.player.PlayerEvent;
 
 public class PacketPlayOutEvent extends PlayerEvent implements Cancellable {
 
-    private @Getter @Setter Packet<PacketListenerPlayOut> packet;
-    private @Getter @Setter boolean cancelled;
     private static final HandlerList handlers = new HandlerList();
+    private @Getter
+    @Setter
+    Packet<PacketListenerPlayOut> packet;
+    private @Getter
+    @Setter
+    boolean cancelled;
 
-    public PacketPlayOutEvent(Player player, Packet<PacketListenerPlayOut> packet){
+    public PacketPlayOutEvent(Player player, Packet<PacketListenerPlayOut> packet) {
         super(player);
         this.packet = packet;
     }

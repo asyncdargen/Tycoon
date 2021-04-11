@@ -23,7 +23,7 @@ public class DoubleFormatter {
 
     public static String format(double toFormat) {
         String formatted = "";
-        for (int i = 33; i > 3; i -= 3) {
+        for (int i = 33; i >= 3; i -= 3) {
             double timely = toFormat / Math.pow(10, i);
             if (timely > 1d) {
                 formatted = format.format(timely) + formats[i];

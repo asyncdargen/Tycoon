@@ -24,10 +24,10 @@ public class BoardModule extends Module implements IBoardModule {
         apply(event.getPlayer());
     }
 
-    public void enable() throws Exception {
+    public void enable(Tycoon tycoon) throws Exception {
         module = IPlayerModule.get();
         registerListener();
-        runTaskTimer(Tycoon.getInstance(), 0, 20);
+        runTaskTimer(tycoon, 0, 20);
     }
 
     public void disable() throws Exception {
@@ -43,15 +43,17 @@ public class BoardModule extends Module implements IBoardModule {
     }
 
     public void update(Player player) {
-        Scoreboard board = player.getScoreboard();
-        IPlayerData data = module.getPlayer(player);
-        int top = data.getTopPosition();
-        updateTeam(board.getTeam("balance"), "", DoubleFormatter.format(data.getMoney()) + "$");
-        updateTeam(board.getTeam("income"), "", DoubleFormatter.format(data.getIncome()) + "$§7/§aсек");
-        updateTeam(board.getTeam("position"), "", (top <= 0 || top > 500) ? "§c>500" : top + "");
-        updateTeam(board.getTeam("prestige"), "", PrestigeFormatter.format(data.getPrestige()));
-        updateTeam(board.getTeam("coins"), "", data.getPoints() + " ❖");
-        updateTeam(board.getTeam("online"), "", Bukkit.getOnlinePlayers().size() + "");
+        try {
+            Scoreboard board = player.getScoreboard();
+            IPlayerData data = module.getPlayer(player);
+            int top = data.getTopPosition();
+            updateTeam(board.getTeam("balance"), "", DoubleFormatter.format(data.getMoney()) + "$");
+            updateTeam(board.getTeam("income"), "", DoubleFormatter.format(data.getIncome()) + "$§7/§aсек");
+            updateTeam(board.getTeam("position"), "", (top <= 0 || top > 500) ? "§c>500" : top + "");
+            updateTeam(board.getTeam("prestige"), "", PrestigeFormatter.format(data.getPrestige()));
+            updateTeam(board.getTeam("coins"), "", data.getPoints() + " ❖");
+            updateTeam(board.getTeam("online"), "", Bukkit.getOnlinePlayers().size() + "");
+        } catch (Exception e) {}
     }
 
     public void apply(Player player) {

@@ -9,7 +9,11 @@ import java.util.function.Consumer;
 
 public class MenuHandler {
 
-    private @Setter @Getter Consumer<InventoryCloseEvent> onClose;
-    private @Setter @Getter Consumer<InventoryClickEvent> onClick;
+    private @Setter
+    @Getter
+    Consumer<InventoryCloseEvent> onClose;
+    private @Setter
+    @Getter
+    Consumer<InventoryClickEvent> onClick;
 
 }

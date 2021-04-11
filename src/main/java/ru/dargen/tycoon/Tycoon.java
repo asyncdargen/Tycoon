@@ -6,8 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import ru.dargen.tycoon.modules.IModule;
 import ru.dargen.tycoon.modules.Module;
 import ru.dargen.tycoon.modules.board.BoardModule;
@@ -23,6 +24,7 @@ import ru.dargen.tycoon.modules.hologram.HologramModule;
 import ru.dargen.tycoon.modules.hologram.IHologramModule;
 import ru.dargen.tycoon.modules.item.IItemModule;
 import ru.dargen.tycoon.modules.item.ItemModule;
+import ru.dargen.tycoon.modules.mechanic.MechanicModule;
 import ru.dargen.tycoon.modules.menu.IMenuModule;
 import ru.dargen.tycoon.modules.menu.MenuModule;
 import ru.dargen.tycoon.modules.npc.INPCModule;
@@ -47,19 +49,23 @@ public class Tycoon extends JavaPlugin {
     public void onEnable() {
         instance = this;
         modules = new HashMap<>();
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.kickPlayer(Prefix.ERR + "Сервер загружается, подождите...");
-        }
         Listener load = new Listener() {
-
             @EventHandler
-            public void login(AsyncPlayerPreLoginEvent event) {
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Prefix.ERR + "Сервер загружается, подождите...");
+            public void login(PlayerPreLoginEvent event) {
+                event.disallow(PlayerPreLoginEvent.Result.KICK_OTHER, Prefix.ERR + "Сервер загружается, подождите...");
             }
         };
+        BukkitTask kickTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this,
+                () -> {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        player.kickPlayer(Prefix.ERR + "Сервер загружается, подождите...");
+                    }
+                }, 0, 1);
         Bukkit.getPluginManager().registerEvents(load, this);
         Bukkit.getScheduler().runTaskLater(this, () -> {
             initModules();
+            if (!kickTask.isCancelled())
+                kickTask.cancel();
             HandlerList.unregisterAll(load);
         }, 60);
     }
@@ -82,6 +88,7 @@ public class Tycoon extends JavaPlugin {
         registerModule(ICommandModule.class, new CommandModule());
         registerModule(IChatModule.class, new ChatModule());
         registerModule(ITabModule.class, new TabModule());
+        registerModule(MechanicModule.class, new MechanicModule());
     }
 
     public Module registerModule(Class<? extends IModule> clazz, Module module) {
@@ -92,11 +99,11 @@ public class Tycoon extends JavaPlugin {
             throw new IllegalStateException("Module not extend IModule");
         IModule iModule = (IModule) module;
         try {
-            iModule.enable();
+            iModule.enable(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("§2Module " + clazz.getSimpleName() + " registered. §fTook §a" + (System.currentTimeMillis() - start) + "ms");
+        System.out.println("Module " + clazz.getSimpleName() + " registered. §2Took §l" + (System.currentTimeMillis() - start) + "ms");
         return modules.put(clazz, module);
     }
 
@@ -106,7 +113,7 @@ public class Tycoon extends JavaPlugin {
             throw new IllegalArgumentException("Module not registered");
         try {
             ((IModule) modules.remove(clazz)).disable();
-            System.out.println("§cModule " + clazz.getSimpleName() + " unregistered. §fTook §a" + (System.currentTimeMillis() - start) + "ms");
+            System.out.println("Module " + clazz.getSimpleName() + " unregistered. §2Took §l" + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
             e.printStackTrace();
         }

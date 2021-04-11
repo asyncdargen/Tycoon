@@ -11,10 +11,6 @@ public class UpdatableItem extends MenuItem {
         super(item);
     }
 
-    public UpdatableItem update() {
-        return this;
-    }
-
     public static MenuItem of(ItemStack item) {
         return new MenuItem(item);
     }
@@ -23,6 +19,10 @@ public class UpdatableItem extends MenuItem {
         MenuItem menuItem = new MenuItem(item);
         menuItem.setClick(click);
         return menuItem;
+    }
+
+    public UpdatableItem update() {
+        return this;
     }
 
 }

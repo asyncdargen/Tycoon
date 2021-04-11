@@ -2,6 +2,7 @@ package ru.dargen.tycoon.modules.database;
 
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
+import ru.dargen.tycoon.Tycoon;
 import ru.dargen.tycoon.modules.Module;
 import ru.dream.network.core.DreamNetworkCoreBukkit;
 
@@ -14,15 +15,17 @@ import java.util.function.Consumer;
 
 public class DatabaseModule extends Module implements IDatabaseModule {
 
-    private @Getter HikariDataSource dataSource;
+    private @Getter
+    HikariDataSource dataSource;
     private Connection connection;
 
-    public void enable() throws Exception {
+    public void enable(Tycoon tycoon) throws Exception {
         dataSource = null;
         while (dataSource == null) {
             try {
                 dataSource = DreamNetworkCoreBukkit.getConnector().getHikari();
-            } catch (Exception ignored){}
+            } catch (Exception ignored) {
+            }
         }
         connection = getConnection();
     }

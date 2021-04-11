@@ -12,8 +12,8 @@ public interface ITabModule extends IModule {
 
     void applyTab(Player player);
 
-    void setView(ITabView view);
-
     ITabView getView();
+
+    void setView(ITabView view);
 
 }

@@ -1,8 +1,10 @@
 package ru.dargen.tycoon.modules;
 
+import ru.dargen.tycoon.Tycoon;
+
 public interface IModule {
 
-    void enable() throws Exception;
+    void enable(Tycoon tycoon) throws Exception;
 
     void disable() throws Exception;
 

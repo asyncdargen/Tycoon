@@ -8,6 +8,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import ru.dargen.tycoon.Tycoon;
 import ru.dargen.tycoon.modules.Module;
 import ru.dargen.tycoon.modules.player.IPlayerData;
 import ru.dargen.tycoon.modules.player.IPlayerModule;
@@ -25,7 +26,7 @@ public class ChatModule extends Module implements IChatModule {
     private ConsoleCommandSender console;
     private Map<String, IChatView> views;
 
-    public void enable() throws Exception {
+    public void enable(Tycoon tycoon) throws Exception {
         views = new HashMap<>();
         console = Bukkit.getConsoleSender();
         registerListener();
@@ -42,18 +43,18 @@ public class ChatModule extends Module implements IChatModule {
     }
 
     private void registerDefaultChats() {
-        addChat("", new IChatView() {
-            private IPlayerModule module = IPlayerModule.get();
+        IPlayerModule module = IPlayerModule.get();
+        IChatView def = new IChatView() {
             public TextComponent getStats(Player player) {
                 IPlayerData data = module.getPlayer(player);
                 TextComponent statsText = new TextComponent("§7[§aСтатистика§7]");
                 statsText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                         TextComponent.fromLegacyText(new StringBuilder()
-                        .append("§fПозиция в топе: §a" + ((data.getTopPosition() <= 0 || data.getTopPosition() > 500) ? "§c>500" : data.getTopPosition()) + "\n")
-                        .append("§fБаланс: §a" + DoubleFormatter.format(data.getMoney()) + "$\n")
-                        .append("§fДоход: §a" + DoubleFormatter.format(data.getIncome()) + "$§7/§aсек\n")
-                        .append("§fПрестиж: " + PrestigeFormatter.format(data.getPrestige()))
-                        .toString())));
+                                .append("§fПозиция в топе: §a" + ((data.getTopPosition() <= 0 || data.getTopPosition() > 500) ? "§c>500" : data.getTopPosition()) + "\n")
+                                .append("§fБаланс: §a" + DoubleFormatter.format(data.getMoney()) + "$\n")
+                                .append("§fДоход: §a" + DoubleFormatter.format(data.getIncome()) + "$§7/§aсек\n")
+                                .append("§fПрестиж: " + PrestigeFormatter.format(data.getPrestige()))
+                                .toString())));
                 return statsText;
             }
 
@@ -67,7 +68,7 @@ public class ChatModule extends Module implements IChatModule {
                 PlayerProfile profile = IAccountService.get().getProfile(player);
                 PlayerGroup group = profile.getGroup();
                 TextComponent msg = new TextComponent(group.getPrefix() + (group == PlayerGroup.player ? "" : " §r"));
-                TextComponent nick = new TextComponent("§7" +   player.getName());
+                TextComponent nick = new TextComponent("§7" + player.getName());
                 nick.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§aНажмите, чтобы написать сообщение")));
                 nick.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + player.getName() + " "));
                 msg.addExtra(nick);
@@ -102,6 +103,28 @@ public class ChatModule extends Module implements IChatModule {
             public boolean canView(Player sender, Player view) {
                 return true;
             }
+        };
+        addChat("!", new IChatView() {
+            public TextComponent getFormat(Player player, String message) {
+                TextComponent prefix = new TextComponent("§7(§a§lG§7) §f");
+                prefix.addExtra(def.getFormat(player, message));
+                return prefix;
+            }
+
+            public boolean canView(Player sender, Player view) {
+                return true;
+            }
+        });
+        addChat("", new IChatView() {
+            public TextComponent getFormat(Player player, String message) {
+                TextComponent prefix = new TextComponent("§7(§e§lL§7) §f");
+                prefix.addExtra(def.getFormat(player, message));
+                return prefix;
+            }
+
+            public boolean canView(Player sender, Player view) {
+                return module.getPlayer(sender).getPrestige() == module.getPlayer(view).getPrestige();
+            }
         });
     }
 
@@ -113,7 +136,7 @@ public class ChatModule extends Module implements IChatModule {
         IChatView chat = null;
         String prefix = "";
         for (String s : views.keySet()) {
-            if (msg.toLowerCase().startsWith(s)) {
+            if (msg.toLowerCase().startsWith(s) && !s.equals(prefix)) {
                 chat = views.get(s);
                 prefix = s;
                 break;

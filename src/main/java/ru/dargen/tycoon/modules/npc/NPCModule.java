@@ -15,7 +15,9 @@ import ru.dargen.tycoon.modules.npc.enums.Interact;
 import ru.dargen.tycoon.modules.npc.event.PlayerInteractNPCEvent;
 import ru.dargen.tycoon.modules.packet.event.PacketPlayInEvent;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class NPCModule extends Module implements INPCModule {
@@ -48,19 +50,19 @@ public class NPCModule extends Module implements INPCModule {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        for (NPC npc : npcMap.values()){
+        for (NPC npc : npcMap.values()) {
             npc.getPlayers().remove(e.getPlayer().getUniqueId());
         }
     }
 
     @EventHandler
     public void onDeath(PlayerRespawnEvent e) {
-        for (NPC npc : npcMap.values()){
+        for (NPC npc : npcMap.values()) {
             npc.getPlayers().remove(e.getPlayer().getUniqueId());
         }
     }
 
-    protected void lookUpdate(){
+    protected void lookUpdate() {
         for (NPC npc : npcMap.values()) {
             if (npc.isLookHeadRotate())
                 npc.updateLook();
@@ -68,9 +70,9 @@ public class NPCModule extends Module implements INPCModule {
     }
 
     public void run() {
-        for (Player player : Bukkit.getOnlinePlayers()){
-            for (NPC npc : npcMap.values()){
-                if (npc.getLocation().distance(player.getLocation()) > 35){
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            for (NPC npc : npcMap.values()) {
+                if (npc.getLocation().distance(player.getLocation()) > 35) {
                     if (npc.getPlayers().contains(player.getUniqueId())) {
                         npc.destroy(player);
                         npc.getPlayers().remove(player.getUniqueId());
@@ -85,12 +87,12 @@ public class NPCModule extends Module implements INPCModule {
         }
     }
 
-    public void enable() throws Exception {
+    public void enable(Tycoon tycoon) throws Exception {
         NPC.module = this;
         npcMap = new HashMap<>();
         registerListener();
-        lookTask = Bukkit.getScheduler().runTaskTimer(Tycoon.getInstance(), this::lookUpdate, 0, 1);
-        runTaskTimer(Tycoon.getInstance(), 0, 20);
+        lookTask = Bukkit.getScheduler().runTaskTimer(tycoon, this::lookUpdate, 0, 1);
+        runTaskTimer(tycoon, 0, 20);
     }
 
     public void disable() throws Exception {
@@ -124,9 +126,9 @@ public class NPCModule extends Module implements INPCModule {
     }
 
     public void unRegisterAll() {
-        for (val npc : npcMap.entrySet()) {
-            npcMap.remove(npc.getKey()).destroyAll();
-        }
+        Iterator iterator = Arrays.stream(Arrays.copyOf(npcMap.values().toArray(), npcMap.size())).iterator();
+        while (iterator.hasNext())
+            unRegister((NPC) iterator.next());
     }
 
 

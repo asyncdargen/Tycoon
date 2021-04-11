@@ -7,9 +7,9 @@ import java.util.List;
 
 public class IntegerArgument implements Argument<Integer> {
 
-    private @Getter String name;
-    private @Getter boolean required;
-    private List<Integer> filter;
+    private @Getter final String name;
+    private @Getter final boolean required;
+    private @Getter final List<Integer> filter;
 
     public IntegerArgument(String name, boolean required, Integer... filter) {
         this(name, required, Arrays.asList(filter));
@@ -26,10 +26,11 @@ public class IntegerArgument implements Argument<Integer> {
         this.required = required;
         this.filter = filter;
     }
+
     public Integer get(String arg) throws Exception {
         if (filter != null && !filter.isEmpty())
             if (!filter.contains(Integer.parseInt(arg)))
-                throw new IllegalArgumentException("Not in filter");
+                throw new IllegalStateException("Not in filter");
         return Integer.parseInt(arg);
     }
 

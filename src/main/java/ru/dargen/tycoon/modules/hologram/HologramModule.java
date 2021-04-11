@@ -9,12 +9,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import ru.dargen.tycoon.Tycoon;
+import ru.dargen.tycoon.modules.IModule;
 import ru.dargen.tycoon.modules.Module;
 import ru.dargen.tycoon.modules.hologram.enums.ClickType;
 import ru.dargen.tycoon.modules.hologram.event.PlayerInteractHologramEvent;
 import ru.dargen.tycoon.modules.packet.event.PacketPlayInEvent;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class HologramModule extends Module implements IHologramModule {
@@ -81,10 +84,10 @@ public class HologramModule extends Module implements IHologramModule {
         return hologramMap.getOrDefault(id, null);
     }
 
-    public void enable() throws Exception {
+    public void enable(Tycoon tycoon) throws Exception {
         Hologram.module = this;
         hologramMap = new HashMap<>();
-        runTaskTimer(Tycoon.getInstance(), 0, 20);
+        runTaskTimer(tycoon, 0, 20);
         registerListener();
     }
 
@@ -113,9 +116,9 @@ public class HologramModule extends Module implements IHologramModule {
     }
 
     public void unRegisterAll() {
-        for (val module : hologramMap.entrySet()) {
-            unRegister(module.getKey());
-        }
+        Iterator iterator = Arrays.stream(Arrays.copyOf(hologramMap.values().toArray(), hologramMap.size())).iterator();
+        while (iterator.hasNext())
+            unRegister((Hologram) iterator.next());
     }
 
     public Hologram getHologramByStandId(int id) {

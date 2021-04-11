@@ -9,16 +9,14 @@ import java.util.function.Consumer;
 
 public class MenuItem {
 
-    private @Setter @Getter ItemStack item;
-    private @Setter Consumer<InventoryClickEvent> click;
+    private @Setter
+    @Getter
+    ItemStack item;
+    private @Setter
+    Consumer<InventoryClickEvent> click;
 
     public MenuItem(ItemStack item) {
         this.item = item;
-    }
-
-    public void click(InventoryClickEvent event) {
-        if (click != null)
-            click.accept(event);
     }
 
     public static MenuItem of(ItemStack item) {
@@ -29,6 +27,11 @@ public class MenuItem {
         MenuItem menuItem = new MenuItem(item);
         menuItem.setClick(click);
         return menuItem;
+    }
+
+    public void click(InventoryClickEvent event) {
+        if (click != null)
+            click.accept(event);
     }
 
 

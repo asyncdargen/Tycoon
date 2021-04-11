@@ -1,27 +1,27 @@
 package ru.dargen.tycoon.modules.player.top;
 
 import lombok.Getter;
-import ru.dargen.tycoon.modules.database.IAsyncDatabaseExecutor;
+import ru.dargen.tycoon.modules.database.IDatabaseExecutor;
 import ru.dargen.tycoon.modules.player.IPlayerData;
 import ru.dargen.tycoon.modules.player.IPlayerModule;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class TopUpdater {
 
-    private Thread updater;
-    private boolean started;
     private final String get = "SELECT `player`, `prestige`, `top` FROM `tycoon`.`players` ORDER BY `players`.`prestige` DESC;";
     private final String set = "UPDATE `tycoon`.`players` SET `top` = '%s' WHERE `players`.`player` = '%s';";
-    private IAsyncDatabaseExecutor executor;
-    private IPlayerModule module;
-    private @Getter Map<String, Integer> topTen;
+    private Thread updater;
+    private boolean started;
+    private final IDatabaseExecutor executor;
+    private final IPlayerModule module;
+    private @Getter
+    Map<String, Integer> topTen;
 
-    public TopUpdater(IAsyncDatabaseExecutor executor, IPlayerModule module) {
+    public TopUpdater(IDatabaseExecutor executor, IPlayerModule module) {
         this.executor = executor;
         this.module = module;
     }
@@ -33,7 +33,8 @@ public class TopUpdater {
                 CompletableFuture.runAsync(this::update);
                 try {
                     Thread.sleep(60000 * 5);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             }
         });
         updater.start();

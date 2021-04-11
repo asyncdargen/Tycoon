@@ -9,7 +9,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import ru.dargen.tycoon.modules.menu.handler.MenuHandler;
 import ru.dargen.tycoon.modules.menu.item.MenuItem;
 import ru.dargen.tycoon.modules.menu.item.UpdatableItem;
@@ -21,19 +20,27 @@ public class Menu {
 
     protected static IMenuModule module;
 
-    private @Setter boolean defaultCancel = false;
-    private @Getter Inventory inventory;
-    private @Getter MenuHandler handler;
-    private @Getter Map<Integer, MenuItem> items = new LinkedHashMap<>();
-    private @Getter Player player;
+    private @Setter
+    boolean defaultCancel = false;
+    private @Getter
+    final
+    Inventory inventory;
+    private @Getter
+    MenuHandler handler;
+    private @Getter
+    final
+    Map<Integer, MenuItem> items = new LinkedHashMap<>();
+    private @Getter
+    final
+    Player player;
 
-    public Menu(String title, int size, Player player){
+    public Menu(String title, int size, Player player) {
         inventory = Bukkit.createInventory(null, size, title);
         module.register(this);
         this.player = player;
     }
 
-    public Menu(String title, InventoryType type, Player player){
+    public Menu(String title, InventoryType type, Player player) {
         inventory = Bukkit.createInventory(null, type, title);
         module.register(this);
         this.player = player;
@@ -68,7 +75,7 @@ public class Menu {
     }
 
     public void onClose(InventoryCloseEvent event) {
-         if (handler == null) {
+        if (handler == null) {
             module.unregister(this);
             return;
         }
@@ -82,7 +89,7 @@ public class Menu {
             event.setCancelled(defaultCancel);
             return;
         }
-        if (event.getInventory().getItem(slot)==null || event.getInventory().getItem(slot).getType().equals(Material.AIR)){
+        if (event.getInventory().getItem(slot) == null || event.getInventory().getItem(slot).getType().equals(Material.AIR)) {
             event.setCancelled(defaultCancel);
             return;
         }

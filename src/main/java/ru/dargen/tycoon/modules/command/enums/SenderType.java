@@ -11,7 +11,9 @@ public enum SenderType {
 
     PLAYER("Игрок"), CONSOLE("Консоль"), BOTH("Все");
 
-    private @Getter String name;
+    private @Getter
+    final
+    String name;
 
     public static SenderType of(CommandSender sender) {
         if (sender instanceof ConsoleCommandSender)

@@ -13,29 +13,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import ru.dargen.tycoon.Tycoon;
 import ru.dargen.tycoon.modules.Module;
 import ru.dargen.tycoon.modules.packet.event.PacketPlayInEvent;
 import ru.dargen.tycoon.modules.packet.event.PacketPlayOutEvent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-public class PacketModule extends Module implements IPacketModule  {
+public class PacketModule extends Module implements IPacketModule {
 
     private Map<UUID, ChannelPipeline> pipelines;
 
-    public void enable() throws Exception {
+    public void enable(Tycoon tycoon) throws Exception {
         pipelines = new HashMap<>();
         registerListener();
     }
 
     public void disable() throws Exception {
-        for (UUID uuid : pipelines.keySet()) {
-            unListenPlayer(uuid);
-        }
         unRegisterListener();
+        Iterator iterator = Arrays.stream(Arrays.copyOf(pipelines.keySet().toArray(), pipelines.size())).iterator();
+        while (iterator.hasNext())
+            unListenPlayer((UUID) iterator.next());
     }
 
     @EventHandler

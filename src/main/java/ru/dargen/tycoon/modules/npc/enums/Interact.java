@@ -6,7 +6,7 @@ public enum Interact {
 
     ATTACK, CLICK;
 
-    public static Interact getByEntityUseAction(PacketPlayInUseEntity.EnumEntityUseAction action){
+    public static Interact getByEntityUseAction(PacketPlayInUseEntity.EnumEntityUseAction action) {
         if (action == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK)
             return ATTACK;
         return CLICK;

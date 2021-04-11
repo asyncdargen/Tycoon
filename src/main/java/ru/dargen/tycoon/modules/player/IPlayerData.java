@@ -1,24 +1,26 @@
 package ru.dargen.tycoon.modules.player;
 
 import org.bukkit.entity.Player;
+import ru.dargen.tycoon.modules.perk.PlayerPerks;
+import ru.dargen.tycoon.modules.perk.enums.Perk;
 import ru.dream.network.core.service.account.PlayerProfile;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public interface IPlayerData {
-    
+
     Player getPlayer();
 
     PlayerProfile getProfile();
 
     double getMoney();
 
-    void setTopPosition(int set);
+    void setMoney(double set);
 
     int getTopPosition();
 
-    void setMoney(double set);
+    void setTopPosition(int set);
 
     void addMoney(double add);
 
@@ -44,11 +46,17 @@ public interface IPlayerData {
 
     boolean isNewbe();
 
+    int upPrestige();
+
+    void checkPerks();
+
+    PlayerPerks getPerks();
+
     String getName();
 
     class Builder {
 
-        private Map<String, Object> values = new HashMap<>();
+        private final Map<String, Object> values = new HashMap<>();
 
         public Builder money(double money) {
             values.put("money", money);
@@ -70,13 +78,17 @@ public interface IPlayerData {
             return this;
         }
 
+        public Builder perks(String perks) {
+            values.put("perks", new PlayerPerks().parse(perks));
+            return this;
+        }
 
         protected <T> T get(String value) {
             return (T) values.get(value);
         }
 
         public IPlayerData build(String name, boolean newbe) {
-            return new PlayerData(name, get("money"), get("prestige"), get("points"), get("top"), newbe);
+            return new PlayerData(name, newbe, get("money"), get("prestige"), get("points"), get("top"), get("perks"));
         }
 
         public IPlayerData build(String name) {
@@ -84,7 +96,7 @@ public interface IPlayerData {
         }
 
         public IPlayerData def(String name) {
-            return new PlayerData(name, 0, 0, 0, 0, true);
+            return new PlayerData(name, true, 0, 0, 0, 0, new PlayerPerks());
         }
 
     }

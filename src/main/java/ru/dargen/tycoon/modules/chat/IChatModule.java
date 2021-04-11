@@ -4,8 +4,6 @@ import org.bukkit.entity.Player;
 import ru.dargen.tycoon.Tycoon;
 import ru.dargen.tycoon.modules.IModule;
 
-import java.util.UUID;
-
 public interface IChatModule extends IModule {
 
     static IChatModule get() {

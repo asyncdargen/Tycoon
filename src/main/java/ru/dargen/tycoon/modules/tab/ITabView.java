@@ -5,6 +5,6 @@ import org.bukkit.entity.Player;
 
 public interface ITabView {
 
-     PacketPlayOutScoreboardTeam generateTeam(Player player);
+    PacketPlayOutScoreboardTeam generateTeam(Player player);
 
 }

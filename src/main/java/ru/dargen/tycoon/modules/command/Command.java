@@ -17,13 +17,22 @@ import java.util.function.BiConsumer;
 
 public abstract class Command implements CommandExecutor {
 
-    private @Getter final String name;
-    private @Getter @Setter SenderType sender = SenderType.BOTH;
-    private @Getter @Setter Requirement requirement;
-    private @Getter final String[] aliases;
-    private @Getter final String description;
-    private @Getter final List<Command> subCommands = new ArrayList<>();
-    private @Getter final List<Argument> arguments = new LinkedList<>();
+    private @Getter
+    final String name;
+    private @Getter
+    @Setter
+    SenderType sender = SenderType.BOTH;
+    private @Getter
+    @Setter
+    Requirement requirement;
+    private @Getter
+    final String[] aliases;
+    private @Getter
+    final String description;
+    private @Getter
+    final List<Command> subCommands = new ArrayList<>();
+    private @Getter
+    final List<Argument> arguments = new LinkedList<>();
 
     public Command(String name, String[] aliases, String description) {
         this.name = name.toLowerCase();
@@ -57,6 +66,16 @@ public abstract class Command implements CommandExecutor {
                 Argument argument = arguments.get(i);
                 try {
                     arg.add(argument.get(args[i]));
+                } catch (IllegalStateException e) {
+                    if (argument.isRequired()) {
+                        String list = "";
+                        for (int i1 = 0; i1 < argument.getFilter().size(); i1++) {
+                            Object o = argument.getFilter().get(i1);
+                            list += "§c" + o.toString() + (i1 >= argument.getFilter().size() - 1 ? " " : "§7/");
+                        }
+                        sender.sendMessage(Prefix.ERR + "Укажите §c" + argument.getName() + "§7: " + list);
+                        return true;
+                    }
                 } catch (Exception e) {
                     if (argument.isRequired()) {
                         sender.sendMessage(Prefix.ERR + "Укажите §c" + argument.getName());
@@ -108,8 +127,8 @@ public abstract class Command implements CommandExecutor {
         return true;
     }
 
-    public void sendHelp(CommandSender sender){
-        BiConsumer<Command, StringBuilder> add = (c,s) -> {
+    public void sendHelp(CommandSender sender) {
+        BiConsumer<Command, StringBuilder> add = (c, s) -> {
             s.append("   /").append(name).append(" ").append(c.getName()).append(" ");
             if (!c.getArguments().isEmpty())
                 for (Argument arg : c.getArguments()) {
@@ -117,11 +136,12 @@ public abstract class Command implements CommandExecutor {
                     s.append((rq ? "§7[§a" : "§7<§a") + arg.getName().toUpperCase() + (rq ? "§7] §r" : "§7> §r"));
                 }
             s.append("§7- §f").append(c.getDescription()).append(" §r\n");
-        };StringBuilder help = new StringBuilder().append("§eПомощь по ").append(name).append("\n")
+        };
+        StringBuilder help = new StringBuilder().append("§eПомощь по ").append(name).append("\n")
                 .append("§6================================================§r\n");
         for (Command command : subCommands) {
             boolean canExec = true;
-            if (command.getRequirement() !=  null)
+            if (command.getRequirement() != null)
                 canExec = command.getRequirement().canExecute(sender);
             if (canExec)
                 add.accept(command, help);

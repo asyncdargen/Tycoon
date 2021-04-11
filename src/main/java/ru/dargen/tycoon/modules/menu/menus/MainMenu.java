@@ -2,14 +2,19 @@ package ru.dargen.tycoon.modules.menu.menus;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import ru.dargen.tycoon.modules.chat.Prefix;
 import ru.dargen.tycoon.modules.menu.Menu;
 import ru.dargen.tycoon.modules.menu.item.MenuItem;
+import ru.dargen.tycoon.modules.menu.item.UpdatableItem;
+import ru.dargen.tycoon.modules.perk.menu.PerksMenu;
 import ru.dargen.tycoon.modules.player.IPlayerData;
 import ru.dargen.tycoon.modules.player.IPlayerModule;
 import ru.dargen.tycoon.utils.ItemBuilder;
 import ru.dargen.tycoon.utils.formatter.PrestigeFormatter;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainMenu extends Menu {
 
@@ -24,6 +29,14 @@ public class MainMenu extends Menu {
         for (int i = 37; i < 46; i++) {
             set(i, line);
         }
+        AtomicInteger count = new AtomicInteger(10);
+        MenuItem pashalka = new UpdatableItem(new ItemBuilder(Material.STAINED_GLASS_PANE, (short) 15).setName(" "));
+        set(45, pashalka);
+        pashalka.setClick(e -> {
+            pashalka.getItem().setLore(Collections.singletonList("§0" + count));
+            if (count.addAndGet(-1) == 0)
+                e.getWhoClicked().sendMessage(Prefix.GEY);
+        });
         MenuItem donate = new MenuItem(new ItemBuilder(Material.DIAMOND)
                 .setName("§aДонат")
                 .setItemLore("§7Здесь вы можете преобрести", "§7бустеры и особые предметы"));
@@ -59,10 +72,11 @@ public class MainMenu extends Menu {
                         "§cВаш завод должен быть прокачен на максимум"));
         set(24, up);
         MenuItem perks = new MenuItem(new ItemBuilder(Material.GOLDEN_CARROT)
-                .setName("§aПрокачки")
+                .setName("§aУлучшения")
                 .setItemLore(
                         "§7Нажмите, чтобы увидеть список доступных",
                         "§7улучшений, за §aочки престижа"));
+        perks.setClick(e -> new PerksMenu(player));
         set(26, perks);
         open();
     }

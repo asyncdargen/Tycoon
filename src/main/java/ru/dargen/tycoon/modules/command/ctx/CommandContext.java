@@ -26,17 +26,17 @@ public interface CommandContext {
     @AllArgsConstructor
     class DefaultContext implements CommandContext {
 
-        private @Getter CommandSender sender;
-        private @Getter SenderType senderType;
-        private @Getter String[] originalArgs;
-        private @Getter List<Object> args;
+        private @Getter final CommandSender sender;
+        private @Getter final SenderType senderType;
+        private @Getter final String[] originalArgs;
+        private @Getter final List<Object> args;
 
         public <T> T getArg(int index) {
             return (T) args.get(index);
         }
 
         public boolean hasArg(int index) {
-            return args.size() >= index;
+            return args.size() - 1 >= index;
         }
 
         public void sendMessage(String msg) {

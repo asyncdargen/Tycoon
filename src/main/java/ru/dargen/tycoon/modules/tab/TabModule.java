@@ -22,16 +22,18 @@ import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 public class TabModule extends Module implements ITabModule {
-    // TODO: 016 16.03.21 пофикстить негра
-    private @Getter @Setter ITabView view;
-    private DreamServer server;
     private final String HEADER = "\n§2§lDream §a§lNetwork\n";
     private final String FOOTER = "\n§2§lСайт §astore.dreamnw.ru\n§2§lОбщий онлайн §a%online%";
+    // TODO: 016 16.03.21 пофикстить негра
+    private @Getter
+    @Setter
+    ITabView view;
+    private DreamServer server;
 
-    public void enable() throws Exception {
-        Bukkit.getScheduler().runTaskLater(Tycoon.getInstance(),
-                () -> {server = IServerService.get().getServer("bungee");}, 20);
-        runTaskTimer(Tycoon.getInstance(), 0, 40);
+    public void enable(Tycoon tycoon) throws Exception {
+        Bukkit.getScheduler().runTaskLater(tycoon,
+                () -> server = IServerService.get().getServer("bungee"), 20);
+        runTaskTimer(tycoon, 0, 40);
         IPlayerModule module = IPlayerModule.get();
         IAccountService accounts = IAccountService.get();
         view = (p) -> {
@@ -47,7 +49,7 @@ public class TabModule extends Module implements ITabModule {
             String name = "";
             if (priority < 10) {
                 name += "00" + priority;
-            } else if(priority < 100) {
+            } else if (priority < 100) {
                 name += "0" + priority;
             } else {
                 name += priority;

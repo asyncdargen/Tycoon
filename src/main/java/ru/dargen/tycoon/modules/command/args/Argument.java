@@ -1,5 +1,7 @@
 package ru.dargen.tycoon.modules.command.args;
 
+import java.util.List;
+
 public interface Argument<T> {
 
     boolean isRequired();
@@ -8,4 +10,5 @@ public interface Argument<T> {
 
     String getName();
 
+    List<T> getFilter();
 }

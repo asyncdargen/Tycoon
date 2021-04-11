@@ -1,6 +1,7 @@
 package ru.dargen.tycoon.modules.item;
 
 import org.apache.logging.log4j.util.BiConsumer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import ru.dargen.tycoon.Tycoon;
@@ -21,6 +22,10 @@ public interface IItemModule extends IModule {
     void registerItem(String name, ItemStack item, BiConsumer<PlayerInteractEvent, ItemStack> interact);
 
     void interact(PlayerInteractEvent event);
+
+    String getItemName(ItemStack item);
+
+    void startKit(Player player);
 
     Map<String, ItemStack> getItems();
 

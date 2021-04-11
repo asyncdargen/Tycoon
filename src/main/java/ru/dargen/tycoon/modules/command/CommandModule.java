@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.inventory.ItemStack;
+import ru.dargen.tycoon.Tycoon;
 import ru.dargen.tycoon.modules.Module;
 import ru.dargen.tycoon.modules.chat.Prefix;
 import ru.dargen.tycoon.modules.command.args.Argument;
@@ -35,7 +36,7 @@ public class CommandModule extends Module implements ICommandModule {
     private @Getter CommandMap commandMap;
     private Map<String, org.bukkit.command.Command> knownCommands;
 
-    public void enable() throws Exception {
+    public void enable(Tycoon tycoon) throws Exception {
         commandMap = ReflectUtil.getFieldValue(Bukkit.getServer(), Bukkit.getServer().getClass().getDeclaredField("commandMap"));
         registeredCommands = new HashMap<>();
         knownCommands = ReflectUtil.getFieldValue(commandMap, commandMap.getClass().getDeclaredField("knownCommands"));
@@ -48,6 +49,16 @@ public class CommandModule extends Module implements ICommandModule {
     private void registerDefaultCommands() {
         registerCommand(new TycoonCommand());
         registerCommand(new MenuCommand());
+        registerCommand(new Command("stop", new String[]{"стоять", "стоп", "стоять-нахуй"}, "Отсановить тукон") {
+            {
+                setRequirement(PermissionRequirement.of("*"));
+                setSender(SenderType.CONSOLE);
+            }
+
+            public void run(CommandContext ctx) {
+                Bukkit.getServer().shutdown();
+            }
+        });
         registerCommand(new Command("help", new String[]{"?", "помощь", "помогите"}, "Выводит список доступных команд") {
             public void run(CommandContext ctx) {
                 ctx.sendMessage(getHelp(ctx.getSender()));
@@ -96,7 +107,7 @@ public class CommandModule extends Module implements ICommandModule {
     }
 
     public void unregisterBlocked() {
-        String[] blocked = {"pl", "plugins", "ver", "version", "about", "spigot", "tps", "restart", "rl", "reload", "help", "?"};
+        String[] blocked = {"stop", "pl", "plugins", "ver", "version", "about", "spigot", "tps", "restart", "rl", "reload", "help", "?"};
         List<String> toRemove = new ArrayList<>(blocked.length * 3);
         toRemove.addAll(Arrays.asList(blocked));
         toRemove.addAll(Arrays.stream(blocked).map("bukkit:"::concat).collect(Collectors.toList()));

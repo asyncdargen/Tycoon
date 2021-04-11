@@ -9,7 +9,9 @@ public enum Status {
     USE_TOTEM(35),
     WATER_DAMAGE(36);
 
-    private @Getter byte value;
+    private @Getter
+    final
+    byte value;
 
     Status(int value) {
         this.value = (byte) value;

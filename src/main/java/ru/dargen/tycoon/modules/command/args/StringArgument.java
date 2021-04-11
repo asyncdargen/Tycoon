@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 public class StringArgument implements Argument<String> {
 
-    private @Getter String name;
-    private @Getter boolean required;
-    private List<String> filter;
+    private @Getter final String name;
+    private @Getter final boolean required;
+    private @Getter final List<String> filter;
 
     public StringArgument(String name, boolean required, String... filter) {
         this(name, required, Arrays.asList(filter));
@@ -31,7 +31,7 @@ public class StringArgument implements Argument<String> {
     public String get(String arg) throws Exception {
         if (filter != null && !filter.isEmpty())
             if (!filter.contains(arg.toLowerCase()))
-                throw new IllegalArgumentException("Not in filter");
+                throw new IllegalStateException("Not in filter");
         return arg;
     }
 
