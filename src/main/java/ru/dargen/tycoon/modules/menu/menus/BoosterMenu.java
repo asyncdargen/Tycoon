@@ -33,11 +33,11 @@ public class BoosterMenu extends Menu {
             set(i, line);
         }
 
-        for (int i = 19; i < 28; i++) {
+        for (int i = 18; i < 28; i++) {
             set(i, line);
         }
 
-        for (int i = 37; i < 46; i++) {
+        for (int i = 36; i < 46; i++) {
             set(i, line);
         }
         open();
@@ -45,8 +45,8 @@ public class BoosterMenu extends Menu {
     }
 
     public void update() {
-        load(Type.CASE, 29, 31, 32, 33, 34, 35, 36);
-        load(Type.INCOME, 11, 13, 14, 15, 16, 17, 18);
+        load(Type.CASE, 29, 31, 32, 33, 34, 35);
+        load(Type.INCOME, 11, 13, 14, 15, 16, 17);
         super.update();
     }
 
