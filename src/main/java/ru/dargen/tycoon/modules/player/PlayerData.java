@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import ru.dargen.tycoon.modules.booster.IBoosterModule;
+import ru.dargen.tycoon.modules.booster.enums.Type;
 import ru.dargen.tycoon.modules.perk.PlayerPerks;
 import ru.dargen.tycoon.modules.perk.enums.Perk;
 import ru.dargen.tycoon.utils.formatter.PrestigeFormatter;
@@ -76,4 +78,9 @@ class PlayerData implements IPlayerData {
     public void checkPerks() {
         getPlayer().setWalkSpeed(0.1f + (getPerks().getPerk(Perk.SPEED) * 0.025f));
     }
+
+    public double getBoost(Type type) {
+        return IBoosterModule.get().getMultiplier(this, type);
+    }
+
 }

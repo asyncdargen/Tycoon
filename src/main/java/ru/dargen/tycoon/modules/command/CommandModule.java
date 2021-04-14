@@ -4,23 +4,21 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.bukkit.inventory.ItemStack;
 import ru.dargen.tycoon.Tycoon;
 import ru.dargen.tycoon.modules.Module;
 import ru.dargen.tycoon.modules.chat.Prefix;
 import ru.dargen.tycoon.modules.command.args.Argument;
-import ru.dargen.tycoon.modules.command.args.StringArgument;
-import ru.dargen.tycoon.modules.command.commands.MenuCommand;
+import ru.dargen.tycoon.modules.command.commands.FlyCommand;
 import ru.dargen.tycoon.modules.command.commands.TycoonCommand;
 import ru.dargen.tycoon.modules.command.ctx.CommandContext;
 import ru.dargen.tycoon.modules.command.enums.SenderType;
 import ru.dargen.tycoon.modules.command.requirements.PermissionRequirement;
-import ru.dargen.tycoon.modules.item.IItemModule;
+import ru.dargen.tycoon.modules.menu.menus.BoosterMenu;
+import ru.dargen.tycoon.modules.menu.menus.MainMenu;
 import ru.dargen.tycoon.utils.reflect.ReflectUtil;
 
 import java.util.*;
@@ -48,7 +46,23 @@ public class CommandModule extends Module implements ICommandModule {
 
     private void registerDefaultCommands() {
         registerCommand(new TycoonCommand());
-        registerCommand(new MenuCommand());
+        registerCommand(new FlyCommand());
+        registerCommand(new Command("menu", new String[]{"меню"}, "Отрывает меню режима") {
+            {
+                setSender(SenderType.PLAYER);
+            }
+            public void run(CommandContext ctx) {
+                new MainMenu((Player) ctx.getSender());
+            }
+        });
+        registerCommand(new Command("boosters", new String[]{"booster", "бустеры"}, "Отрывает меню бустеров") {
+            {
+                setSender(SenderType.PLAYER);
+            }
+            public void run(CommandContext ctx) {
+                new BoosterMenu((Player) ctx.getSender());
+            }
+        });
         registerCommand(new Command("stop", new String[]{"стоять", "стоп", "стоять-нахуй"}, "Отсановить тукон") {
             {
                 setRequirement(PermissionRequirement.of("*"));
@@ -80,10 +94,7 @@ public class CommandModule extends Module implements ICommandModule {
             .append("§eПомощь по командам\n")
             .append("§6================================================§r\n");
         for (Command command : getRegisteredCommands().values().stream().map(CommandRegister::getCommand).collect(Collectors.toList())) {
-            boolean canExec = true;
-            if (command.getRequirement() !=  null)
-                canExec = command.getRequirement().canExecute(sender);
-            if (canExec)
+            if (command.canExecute(sender))
                 add.accept(command, help);
         }
         help.append("§6================================================");
@@ -150,6 +161,8 @@ public class CommandModule extends Module implements ICommandModule {
             return;
         List<String> complete = new ArrayList<>();
         registeredCommands.values().forEach((c) -> {
+            if (!c.getCommand().canExecute(e.getSender()))
+                return;
             complete.add("/" + c.getName());
             complete.addAll(c.getAliases().stream().map("/"::concat).collect(Collectors.toList()));
         });

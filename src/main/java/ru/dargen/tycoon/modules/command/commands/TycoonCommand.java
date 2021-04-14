@@ -1,8 +1,11 @@
 package ru.dargen.tycoon.modules.command.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import ru.dargen.tycoon.modules.booster.Booster;
+import ru.dargen.tycoon.modules.booster.IBoosterModule;
+import ru.dargen.tycoon.modules.booster.enums.Source;
+import ru.dargen.tycoon.modules.booster.enums.Spread;
+import ru.dargen.tycoon.modules.booster.enums.Type;
 import ru.dargen.tycoon.modules.chat.Prefix;
 import ru.dargen.tycoon.modules.command.Command;
 import ru.dargen.tycoon.modules.command.args.DoubleArgument;
@@ -16,8 +19,6 @@ import ru.dargen.tycoon.modules.perk.enums.Perk;
 import ru.dargen.tycoon.modules.player.IPlayerData;
 import ru.dargen.tycoon.modules.player.IPlayerModule;
 
-import java.util.Arrays;
-
 public class TycoonCommand extends Command {
 
     public TycoonCommand() {
@@ -26,6 +27,7 @@ public class TycoonCommand extends Command {
         addSubCommand(new SubItems());
         addSubCommand(new SubEco());
         addSubCommand(new SubPerks());
+        addSubCommand(new SubBoosters());
     }
 
     public void run(CommandContext ctx) {
@@ -138,7 +140,7 @@ public class TycoonCommand extends Command {
                 {
                     setSender(SenderType.PLAYER);
                     addArgument(new StringArgument("ID Предмета", true));
-                    addArgument(new StringArgument("Игрока", false));
+                    addArgument(new StringArgument("Ник", false));
                 }
 
                 public void run(CommandContext ctx) {
@@ -183,7 +185,7 @@ public class TycoonCommand extends Command {
             super("setperk", null, "Устанока уровня перков");
             addArgument(new IntegerArgument("Уровень", true));
             addArgument(new StringArgument("Перк", true, "speed", "luck", "drones"));
-            addArgument(new StringArgument("Игрок", false));
+            addArgument(new StringArgument("Ник", false));
         }
 
         public void run(CommandContext ctx) {
@@ -205,6 +207,46 @@ public class TycoonCommand extends Command {
             }
             data.getPerks().setPerk(perk, level);
             ctx.sendMessage(Prefix.SUCCESS + "Игроку §a" + data.getName() + "§f выдан §a" + level + " уровень§f перка §a" + perk.getDisplayName());
+        }
+    }
+
+    class SubBoosters extends Command {
+
+        public SubBoosters() {
+            super("booster", new String[]{"boost"}, "Управление бустерами");
+            addArgument(new StringArgument("Распространение", true, "global", "local"));
+            addArgument(new StringArgument("Тип", true, "case", "income"));
+            addArgument(new IntegerArgument("Время", true));
+            addArgument(new DoubleArgument("Множитель", true));
+            addArgument(new StringArgument("Ник", false));
+        }
+
+        public void run(CommandContext ctx) {
+            Spread spread = Spread.valueOf(ctx.<String>getArg(0).toUpperCase());
+            Type type = Type.valueOf(ctx.<String>getArg(1).toUpperCase());
+            long duration = ctx.<Integer>getArg(2) * 60_000L;
+            double multiplier = ctx.getArg(3);
+            String name;
+            if (!ctx.hasArg(4))
+                if (ctx.getSenderType() == SenderType.CONSOLE) {
+                    ctx.sendMessage(Prefix.ERR + "Вы не можете запускать бустер консоли");
+                    return;
+                } else
+                    name = ctx.getSender().getName();
+            else
+                name = ctx.getArg(4);
+            IPlayerData data = IPlayerModule.get().getPlayer(name);
+            if (data == null) {
+                ctx.sendMessage(Prefix.ERR + "Игрок офлайн");
+                return;
+            }
+
+            if (IBoosterModule.get().hasBooster(data, type, spread)) {
+                ctx.sendMessage(Prefix.ERR + "У игрока уже запущен бустер этого типа");
+                return;
+            }
+
+            IBoosterModule.get().startBooster(new Booster(System.currentTimeMillis(), duration, spread, Source.COMMAND, type, data.getName(), multiplier));
         }
     }
 }

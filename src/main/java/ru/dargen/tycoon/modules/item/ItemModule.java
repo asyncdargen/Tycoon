@@ -15,7 +15,14 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import ru.dargen.tycoon.Tycoon;
 import ru.dargen.tycoon.modules.Module;
+import ru.dargen.tycoon.modules.booster.Booster;
+import ru.dargen.tycoon.modules.booster.IBoosterModule;
+import ru.dargen.tycoon.modules.booster.enums.Source;
+import ru.dargen.tycoon.modules.booster.enums.Spread;
+import ru.dargen.tycoon.modules.booster.enums.Type;
+import ru.dargen.tycoon.modules.chat.Prefix;
 import ru.dargen.tycoon.modules.menu.menus.MainMenu;
+import ru.dargen.tycoon.modules.player.IPlayerModule;
 import ru.dargen.tycoon.utils.ItemBuilder;
 
 import java.util.HashMap;
@@ -42,6 +49,34 @@ public class ItemModule extends Module implements IItemModule {
     }
 
     private void registerDefault() {
+        registerItem("boost_income", new ItemBuilder(Material.EXP_BOTTLE).setName("§aБустер Дохода").setItemLore(" §fМножитель§7: §ax1.5", " §fДлительность§7: §a5 мин.", "", "§7Нажмите ПКМ для активации"), (e, i) -> {
+            if (e.getAction() != Action.RIGHT_CLICK_AIR || e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) {
+                e.setCancelled(true);
+                return;
+            }
+            if (IBoosterModule.get().hasBooster(IPlayerModule.get().getPlayer(e.getPlayer()), Type.INCOME, Spread.LOCAL)) {
+                e.getPlayer().sendMessage(Prefix.ERR + "Такой бустер уже активирован");
+                e.setCancelled(true);
+                return;
+            }
+            IBoosterModule.get().startBooster(new Booster(System.currentTimeMillis(), 300000, Spread.LOCAL, Source.CASE, Type.INCOME, e.getPlayer().getName(), 1.5));
+            i.setAmount(i.getAmount() - 1);
+            e.setCancelled(true);
+        });
+        registerItem("boost_case", new ItemBuilder(Material.EXP_BOTTLE).setName("§aБустер Кейсов").setItemLore(" §fМножитель§7: §ax1.5", " §fДлительность§7: §a5 мин.", "", "§7Нажмите ПКМ для активации"), (e, i) -> {
+            if (e.getAction() != Action.RIGHT_CLICK_AIR || e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) {
+                e.setCancelled(true);
+                return;
+            }
+            if (IBoosterModule.get().hasBooster(IPlayerModule.get().getPlayer(e.getPlayer()), Type.CASE, Spread.LOCAL)) {
+                e.getPlayer().sendMessage(Prefix.ERR + "Такой бустер уже активирован");
+                e.setCancelled(true);
+                return;
+            }
+            IBoosterModule.get().startBooster(new Booster(System.currentTimeMillis(), 300000, Spread.LOCAL, Source.CASE, Type.CASE, e.getPlayer().getName(), 1.5));
+            i.setAmount(i.getAmount() - 1);
+            e.setCancelled(true);
+        });
         registerItem("menu", new ItemBuilder(Material.NETHER_STAR).setName("§aМеню").addLoreLine("§7Нажмите ПКМ, чтобы открыть меню"), (e, i) -> {
             if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() != EquipmentSlot.OFF_HAND) {
                 new MainMenu(e.getPlayer());

@@ -13,6 +13,8 @@ import ru.dargen.tycoon.modules.IModule;
 import ru.dargen.tycoon.modules.Module;
 import ru.dargen.tycoon.modules.board.BoardModule;
 import ru.dargen.tycoon.modules.board.IBoardModule;
+import ru.dargen.tycoon.modules.booster.BoosterModule;
+import ru.dargen.tycoon.modules.booster.IBoosterModule;
 import ru.dargen.tycoon.modules.chat.ChatModule;
 import ru.dargen.tycoon.modules.chat.IChatModule;
 import ru.dargen.tycoon.modules.chat.Prefix;
@@ -88,6 +90,7 @@ public class Tycoon extends JavaPlugin {
         registerModule(ICommandModule.class, new CommandModule());
         registerModule(IChatModule.class, new ChatModule());
         registerModule(ITabModule.class, new TabModule());
+        registerModule(IBoosterModule.class, new BoosterModule());
         registerModule(MechanicModule.class, new MechanicModule());
     }
 

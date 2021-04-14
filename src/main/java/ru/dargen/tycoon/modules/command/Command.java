@@ -17,22 +17,13 @@ import java.util.function.BiConsumer;
 
 public abstract class Command implements CommandExecutor {
 
-    private @Getter
-    final String name;
-    private @Getter
-    @Setter
-    SenderType sender = SenderType.BOTH;
-    private @Getter
-    @Setter
-    Requirement requirement;
-    private @Getter
-    final String[] aliases;
-    private @Getter
-    final String description;
-    private @Getter
-    final List<Command> subCommands = new ArrayList<>();
-    private @Getter
-    final List<Argument> arguments = new LinkedList<>();
+    private @Getter final String name;
+    private @Getter @Setter SenderType sender = SenderType.BOTH;
+    private @Getter @Setter Requirement requirement;
+    private @Getter final String[] aliases;
+    private @Getter final String description;
+    private @Getter final List<Command> subCommands = new ArrayList<>();
+    private @Getter final List<Argument> arguments = new LinkedList<>();
 
     public Command(String name, String[] aliases, String description) {
         this.name = name.toLowerCase();
@@ -45,6 +36,13 @@ public abstract class Command implements CommandExecutor {
         for (int i = 0; i < aliases.length; i++) {
             this.aliases[i] = aliases[i].toLowerCase();
         }
+    }
+
+    public boolean canExecute(CommandSender sender) {
+        boolean canExec = true;
+        if (requirement != null)
+            canExec = requirement.canExecute(sender);
+        return canExec;
     }
 
     public Command addArgument(Argument argument) {
@@ -140,10 +138,7 @@ public abstract class Command implements CommandExecutor {
         StringBuilder help = new StringBuilder().append("§eПомощь по ").append(name).append("\n")
                 .append("§6================================================§r\n");
         for (Command command : subCommands) {
-            boolean canExec = true;
-            if (command.getRequirement() != null)
-                canExec = command.getRequirement().canExecute(sender);
-            if (canExec)
+            if (command.canExecute(sender))
                 add.accept(command, help);
         }
         help.append("§6================================================");

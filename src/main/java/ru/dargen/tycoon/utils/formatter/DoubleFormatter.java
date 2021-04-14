@@ -25,7 +25,7 @@ public class DoubleFormatter {
         String formatted = "";
         for (int i = 33; i >= 3; i -= 3) {
             double timely = toFormat / Math.pow(10, i);
-            if (timely > 1d) {
+            if (timely >= 1d) {
                 formatted = format.format(timely) + formats[i];
                 break;
             }
@@ -34,6 +34,6 @@ public class DoubleFormatter {
             formatted = format.format(toFormat);
         while (formatted.contains(".") && (formatted.endsWith("0") || formatted.endsWith(".")))
             formatted = formatted.substring(0, formatted.length() - 1);
-        return formatted;
+        return formatted.replace(",", ".");
     }
 }

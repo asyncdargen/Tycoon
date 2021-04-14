@@ -6,7 +6,6 @@ import ru.dargen.tycoon.modules.chat.Prefix;
 import ru.dargen.tycoon.modules.menu.Menu;
 import ru.dargen.tycoon.modules.menu.item.MenuItem;
 import ru.dargen.tycoon.modules.menu.item.UpdatableItem;
-import ru.dargen.tycoon.modules.perk.menu.PerksMenu;
 import ru.dargen.tycoon.modules.player.IPlayerData;
 import ru.dargen.tycoon.modules.player.IPlayerModule;
 import ru.dargen.tycoon.utils.ItemBuilder;

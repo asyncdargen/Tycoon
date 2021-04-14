@@ -1,8 +1,8 @@
 package ru.dargen.tycoon.modules.player;
 
 import org.bukkit.entity.Player;
+import ru.dargen.tycoon.modules.booster.enums.Type;
 import ru.dargen.tycoon.modules.perk.PlayerPerks;
-import ru.dargen.tycoon.modules.perk.enums.Perk;
 import ru.dream.network.core.service.account.PlayerProfile;
 
 import java.util.HashMap;
@@ -51,6 +51,8 @@ public interface IPlayerData {
     void checkPerks();
 
     PlayerPerks getPerks();
+
+    double getBoost(Type type);
 
     String getName();
 
