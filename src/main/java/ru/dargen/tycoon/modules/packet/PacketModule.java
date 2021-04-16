@@ -7,6 +7,7 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 import net.minecraft.server.v1_12_R1.Packet;
 import net.minecraft.server.v1_12_R1.PacketListenerPlayIn;
 import net.minecraft.server.v1_12_R1.PacketListenerPlayOut;
+import net.minecraft.server.v1_12_R1.PacketPlayOutAttachEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;

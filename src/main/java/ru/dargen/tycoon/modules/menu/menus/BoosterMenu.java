@@ -2,6 +2,7 @@ package ru.dargen.tycoon.modules.menu.menus;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import ru.dargen.tycoon.modules.booster.Booster;
 import ru.dargen.tycoon.modules.booster.IBoosterModule;
 import ru.dargen.tycoon.modules.booster.enums.Type;
@@ -67,7 +68,8 @@ public class BoosterMenu extends Menu {
                         " §fВладелец§7: §a" + booster.getOwner(),
                         " §fМножитель§7: §ax" + DoubleFormatter.format(booster.getMultiplier()), "",
                         " §fДлительность§7: §a" + (booster.isInfinity() ? "Бесконечность" : TimeFormatter.format(booster.getLeft()))
-                ));
+                )
+                .addFlags(ItemFlag.values())    );
             set(slots[slot++], b);
         }
         for (; slot < slots.length; slot++) {

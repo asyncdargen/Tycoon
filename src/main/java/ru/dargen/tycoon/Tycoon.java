@@ -1,11 +1,19 @@
 package ru.dargen.tycoon;
 
 import lombok.Getter;
+import net.minecraft.server.v1_12_R1.EntityPlayer;
+import net.minecraft.server.v1_12_R1.PacketPlayOutAttachEntity;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -33,6 +41,8 @@ import ru.dargen.tycoon.modules.npc.INPCModule;
 import ru.dargen.tycoon.modules.npc.NPCModule;
 import ru.dargen.tycoon.modules.packet.IPacketModule;
 import ru.dargen.tycoon.modules.packet.PacketModule;
+import ru.dargen.tycoon.modules.packet.event.PacketPlayInEvent;
+import ru.dargen.tycoon.modules.packet.event.PacketPlayOutEvent;
 import ru.dargen.tycoon.modules.player.IPlayerModule;
 import ru.dargen.tycoon.modules.player.PlayerModule;
 import ru.dargen.tycoon.modules.tab.ITabModule;

@@ -87,6 +87,9 @@ public class BoosterModule extends Module implements IBoosterModule {
         if (global.containsKey(type))
             boosters.add(global.get(type));
 
+        if (data.getPlayer().hasPermission("tycoon.donate.pickaxe") && type == Type.INCOME)
+            boosters.add(new Booster(0, 0, Spread.LOCAL, Source.PICKAXE, type, data.getName(), 1.2d));
+
         if (data.getPrestige() > 0)
             boosters.add(new Booster(0, 0, Spread.LOCAL, Source.PRESTIGE, type, data.getName(), data.getPrestige() / 10d + 1));
 
@@ -168,10 +171,11 @@ public class BoosterModule extends Module implements IBoosterModule {
             for (Booster boost : boosters) {
                 if (boost.isExpired()) {
                     toRemove.add(boost);
-                    Bukkit.getPlayer(uuid).sendMessage(Prefix.ERR
-                            + "Закончился локальный бустер §c"
-                            + boost.getType().getName()
-                            + "§c x" + DoubleFormatter.format(boost.getMultiplier()));
+                    if (Bukkit.getPlayer(uuid) != null)
+                        Bukkit.getPlayer(uuid).sendMessage(Prefix.ERR
+                                + "Закончился локальный бустер §c"
+                                + boost.getType().getName()
+                                + "§c x" + DoubleFormatter.format(boost.getMultiplier()));
                 }
             }
             boosters.removeAll(toRemove);

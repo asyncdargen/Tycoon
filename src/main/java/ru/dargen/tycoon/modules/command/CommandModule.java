@@ -13,6 +13,8 @@ import ru.dargen.tycoon.modules.Module;
 import ru.dargen.tycoon.modules.chat.Prefix;
 import ru.dargen.tycoon.modules.command.args.Argument;
 import ru.dargen.tycoon.modules.command.commands.FlyCommand;
+import ru.dargen.tycoon.modules.command.commands.PickaxeCommand;
+import ru.dargen.tycoon.modules.command.commands.TrashCommand;
 import ru.dargen.tycoon.modules.command.commands.TycoonCommand;
 import ru.dargen.tycoon.modules.command.ctx.CommandContext;
 import ru.dargen.tycoon.modules.command.enums.SenderType;
@@ -47,6 +49,8 @@ public class CommandModule extends Module implements ICommandModule {
     private void registerDefaultCommands() {
         registerCommand(new TycoonCommand());
         registerCommand(new FlyCommand());
+        registerCommand(new PickaxeCommand());
+        registerCommand(new TrashCommand());
         registerCommand(new Command("menu", new String[]{"меню"}, "Отрывает меню режима") {
             {
                 setSender(SenderType.PLAYER);

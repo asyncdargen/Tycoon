@@ -87,7 +87,7 @@ public class ReflectUtil {
         return method;
     }
 
-    public static <T> T invokeMethod(Object obj, Method method, Object params){
+    public static <T> T invokeMethod(Object obj, Method method, Object... params){
         T value = null;
         try {
             if (getMethodReturn(method) == Void.class)

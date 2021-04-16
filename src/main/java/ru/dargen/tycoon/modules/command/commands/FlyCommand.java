@@ -6,18 +6,13 @@ import ru.dargen.tycoon.modules.chat.Prefix;
 import ru.dargen.tycoon.modules.command.Command;
 import ru.dargen.tycoon.modules.command.ctx.CommandContext;
 import ru.dargen.tycoon.modules.command.enums.SenderType;
-import ru.dargen.tycoon.modules.command.requirements.PermissionRequirement;
+import ru.dargen.tycoon.modules.command.requirements.DonateRequirement;
 
 public class FlyCommand extends Command {
 
     public FlyCommand() {
         super("fly", new String[]{"полёт"}, "Включение режима полёта");
-        setRequirement(new PermissionRequirement("tycoon.fly") {
-            @Override
-            public String getErrorMessage(CommandSender sender) {
-                return Prefix.ERR + "Нужно купить в §c/donate";
-            }
-        });
+        setRequirement(new DonateRequirement("tycoon.donate.fly"));
     }
 
     public void run(CommandContext ctx) {

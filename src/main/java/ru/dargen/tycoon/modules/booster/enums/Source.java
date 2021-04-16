@@ -11,6 +11,7 @@ public enum Source {
     CASE("Кейс", Material.CHEST),
     COMMAND("Команда", Material.REDSTONE),
     PRESTIGE("Престиж", Material.NETHER_STAR),
+    PICKAXE("Легендарная Кирка", Material.DIAMOND_PICKAXE),
     GROUP("Донат группа", Material.CONCRETE);
 
     private @Getter final String name;

@@ -2,6 +2,7 @@ package ru.dargen.tycoon.modules.item;
 
 import lombok.Getter;
 import lombok.val;
+import net.minecraft.server.v1_12_R1.NBTTagList;
 import net.minecraft.server.v1_12_R1.NBTTagString;
 import org.apache.logging.log4j.util.BiConsumer;
 import org.bukkit.Material;
@@ -24,9 +25,10 @@ import ru.dargen.tycoon.modules.chat.Prefix;
 import ru.dargen.tycoon.modules.menu.menus.MainMenu;
 import ru.dargen.tycoon.modules.player.IPlayerModule;
 import ru.dargen.tycoon.utils.ItemBuilder;
+import ru.dargen.tycoon.utils.reflect.ReflectUtil;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ItemModule extends Module implements IItemModule {
 
@@ -50,7 +52,7 @@ public class ItemModule extends Module implements IItemModule {
 
     private void registerDefault() {
         registerItem("boost_income", new ItemBuilder(Material.EXP_BOTTLE).setName("§aБустер Дохода").setItemLore(" §fМножитель§7: §ax1.5", " §fДлительность§7: §a5 мин.", "", "§7Нажмите ПКМ для активации"), (e, i) -> {
-            if (e.getAction() != Action.RIGHT_CLICK_AIR || e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) {
+            if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) {
                 e.setCancelled(true);
                 return;
             }
@@ -64,7 +66,7 @@ public class ItemModule extends Module implements IItemModule {
             e.setCancelled(true);
         });
         registerItem("boost_case", new ItemBuilder(Material.EXP_BOTTLE).setName("§aБустер Кейсов").setItemLore(" §fМножитель§7: §ax1.5", " §fДлительность§7: §a5 мин.", "", "§7Нажмите ПКМ для активации"), (e, i) -> {
-            if (e.getAction() != Action.RIGHT_CLICK_AIR || e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) {
+            if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) {
                 e.setCancelled(true);
                 return;
             }
@@ -83,26 +85,32 @@ public class ItemModule extends Module implements IItemModule {
                 e.setCancelled(true);
             }
         });
+
+        NBTTagList tags = new NBTTagList();
+        ReflectUtil.setValue(tags, "list",
+                Arrays.stream(new String[]{"gold_ore", "iron_ore", "coal_ore", "lapis_ore", "diamond_ore", "redstone_ore", "lit_redstone_ore", "glowing_redstone_ore", "emerald_ore", "quartz_ore"})
+                        .map("minecraft:"::concat).map(NBTTagString::new).collect(Collectors.toList()));
+
         String[] lore = {"§7Используется для добычи полезных ископаемых", "", "§7Соедините две одинаковых кирки", "§7в одном слоте, для улучшения"};
-        ItemBuilder wood = new ItemBuilder(Material.WOOD_PICKAXE);
+        ItemBuilder wood = new ItemBuilder(Material.WOOD_PICKAXE).setTag("CanDestroy", tags);
         wood.addFlags(ItemFlag.values());
         wood.setUnbreakable(true);
         wood.setItemLore(lore);
         registerItem("pickaxe_1", ((ItemBuilder) wood.clone()).setName("§a§lКирка §cI"));
         registerItem("pickaxe_2", ((ItemBuilder) wood.clone()).setName("§a§lКирка §cII").addLore(" ", "§fЭффективность §2I").addItemEnchant(Enchantment.DIG_SPEED, 1));
-        ItemBuilder stone = new ItemBuilder(Material.STONE_PICKAXE);
+        ItemBuilder stone = new ItemBuilder(Material.STONE_PICKAXE).setTag("CanDestroy", tags);
         stone.addFlags(ItemFlag.values());
         stone.setUnbreakable(true);
         stone.setItemLore(lore);
         registerItem("pickaxe_3", ((ItemBuilder) stone.clone()).setName("§a§lКирка §cIII").addLore(" ", "§fЭффективность §2I").addItemEnchant(Enchantment.DIG_SPEED, 1));
         registerItem("pickaxe_4", ((ItemBuilder) stone.clone()).setName("§a§lКирка §cIV").addLore(" ", "§fЭффективность §2II").addItemEnchant(Enchantment.DIG_SPEED, 2));
-        ItemBuilder iron = new ItemBuilder(Material.IRON_PICKAXE);
+        ItemBuilder iron = new ItemBuilder(Material.IRON_PICKAXE).setTag("CanDestroy", tags);
         iron.addFlags(ItemFlag.values());
         iron.setUnbreakable(true);
         iron.setItemLore(lore);
         registerItem("pickaxe_5", ((ItemBuilder) iron.clone()).setName("§a§lКирка §cV").addLore(" ", "§fЭффективность §2II").addItemEnchant(Enchantment.DIG_SPEED, 2));
         registerItem("pickaxe_6", ((ItemBuilder) iron.clone()).setName("§a§lКирка §cVI").addLore(" ", "§fЭффективность §2III").addItemEnchant(Enchantment.DIG_SPEED, 3));
-        ItemBuilder diam = new ItemBuilder(Material.DIAMOND_PICKAXE);
+        ItemBuilder diam = new ItemBuilder(Material.DIAMOND_PICKAXE).setTag("CanDestroy", tags);
         diam.addFlags(ItemFlag.values());
         diam.setUnbreakable(true);
         diam.setItemLore(lore);
@@ -112,7 +120,8 @@ public class ItemModule extends Module implements IItemModule {
         registerItem("pickaxe_10", ((ItemBuilder) diam.clone()).setName("§a§lКирка §cX").addLore(" ", "§fЭффективность §2VI").addItemEnchant(Enchantment.DIG_SPEED, 6));
         registerItem("pickaxe_11", ((ItemBuilder) diam.clone()).setName("§a§lКирка §cXI").addLore(" ", "§fЭффективность §2VII").addItemEnchant(Enchantment.DIG_SPEED, 7));
         registerItem("pickaxe_12", ((ItemBuilder) diam.clone()).setName("§a§lКирка §cXII").addLore(" ", "§fЭффективность §2VIII").addItemEnchant(Enchantment.DIG_SPEED, 8));
-        registerItem("pickaxe_13", ((ItemBuilder) diam.clone()).setName("§a§lКирка §cXIII").setItemLore("§7Используется для добычи полезных ископаемых", "", "§fЭффективность §2IX").addItemEnchant(Enchantment.DIG_SPEED, 9));
+        registerItem("pickaxe_13", ((ItemBuilder) diam.clone()).setName("§a§lКирка §cXIII").setItemLore().addItemEnchant(Enchantment.DIG_SPEED, 9));
+        registerItem("pickaxe_donate", ((ItemBuilder) diam.clone()).setName("§6Легендарная §a§lКирка").setItemLore("§7Используется для добычи полезных ископаемых", "", "§7охраняется после §cпрестижа§7, §a/pickaxe§7,", "§7даёт §ax1.2 §7бустер дохода", "", "§fЭффективность §2XX").addItemEnchant(Enchantment.DIG_SPEED, 20));
     }
 
     public ItemStack getItem(String name) {
